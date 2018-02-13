@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"syscall"
-    "os"
-    "path/filepath"
 
-    "golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // NewPrivateKey will create a new private key of the given bits size, If the second argument
@@ -60,7 +60,7 @@ func OpenPrivateKey(name string) (*rsa.PrivateKey, error) {
 		if block, _ := pem.Decode(buf); block != nil {
 			raw := block.Bytes
 			if x509.IsEncryptedPEMBlock(block) {
-				raw, err = x509.DecryptPEMBlock(block, readPassword("Enter passphrase for key " + filepath.Base(name) + ": "))
+				raw, err = x509.DecryptPEMBlock(block, readPassword("Enter passphrase for key "+filepath.Base(name)+": "))
 			}
 			key, err := x509.ParsePKCS8PrivateKey(raw)
 			if err != nil {

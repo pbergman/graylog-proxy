@@ -1,17 +1,14 @@
 package command
 
 import (
-	//"errors"
-	//"fmt"
+	"errors"
+	"fmt"
 	"path/filepath"
-	//"strings"
+	"strings"
 
 	"github.com/pbergman/app"
 	"github.com/pbergman/graylog-proxy/net"
 	"github.com/spf13/pflag"
-    "fmt"
-    "strings"
-    "errors"
 )
 
 func NewListenCommand() app.CommandInterface {
@@ -55,24 +52,24 @@ func (c *ListenCommand) Init(a *app.App) error {
 	c.Flags.(*pflag.FlagSet).String("pem", "Client.pem", "")
 	c.Flags.(*pflag.FlagSet).String("crt", "Client.crt", "")
 	c.Flags.(*pflag.FlagSet).String("ca", "CA_Root.crt", "")
-    c.Flags.(*pflag.FlagSet).Bool("new-line", false, "")
-    c.Flags.(*pflag.FlagSet).Lookup("new-line").NoOptDefVal = "true"
+	c.Flags.(*pflag.FlagSet).Bool("new-line", false, "")
+	c.Flags.(*pflag.FlagSet).Lookup("new-line").NoOptDefVal = "true"
 	c.Flags.(*pflag.FlagSet).IntP("workers", "w", 10, "")
 	c.Flags.(*pflag.FlagSet).BoolP("print", "p", false, "")
 	c.Flags.(*pflag.FlagSet).Lookup("print").NoOptDefVal = "true"
-    c.Flags.(*pflag.FlagSet).Bool("no-client-auth", false, "")
-    c.Flags.(*pflag.FlagSet).Lookup("no-client-auth").NoOptDefVal = "true"
+	c.Flags.(*pflag.FlagSet).Bool("no-client-auth", false, "")
+	c.Flags.(*pflag.FlagSet).Lookup("no-client-auth").NoOptDefVal = "true"
 	return nil
 }
 
 func (c ListenCommand) getIntVar(s string) int {
-    r, _ := c.Flags.(*pflag.FlagSet).GetInt(s)
-    return r
+	r, _ := c.Flags.(*pflag.FlagSet).GetInt(s)
+	return r
 }
 
 func (c ListenCommand) getBoolVar(s string) bool {
-    r, _ := c.Flags.(*pflag.FlagSet).GetBool(s)
-    return r
+	r, _ := c.Flags.(*pflag.FlagSet).GetBool(s)
+	return r
 }
 
 func (c *ListenCommand) print() bool {
@@ -136,21 +133,21 @@ func (c *ListenCommand) Run(args []string, app *app.App) error {
 	defer listener.Close()
 
 	if remote != "" {
-        host := net.NewGraylogHost(remote)
+		host := net.NewGraylogHost(remote)
 
-        if host == nil {
-            return fmt.Errorf("invalid hostname provided, see \"help host\"")
-        }
+		if host == nil {
+			return fmt.Errorf("invalid hostname provided, see \"help host\"")
+		}
 
-        conn, err = net.NewConnPool(
-            c.getBoolVar("no-client-auth"),
-            c.getIntVar("tries"),
-            host,
-            c.Flags.(*pflag.FlagSet).Lookup("ca").Value.String(),
-            c.Flags.(*pflag.FlagSet).Lookup("crt").Value.String(),
-            c.Flags.(*pflag.FlagSet).Lookup("pem").Value.String(),
-            app.Container.(*Container).GetLogger(),
-        )
+		conn, err = net.NewConnPool(
+			c.getBoolVar("no-client-auth"),
+			c.getIntVar("tries"),
+			host,
+			c.Flags.(*pflag.FlagSet).Lookup("ca").Value.String(),
+			c.Flags.(*pflag.FlagSet).Lookup("crt").Value.String(),
+			c.Flags.(*pflag.FlagSet).Lookup("pem").Value.String(),
+			app.Container.(*Container).GetLogger(),
+		)
 
 		if err != nil {
 			return err
@@ -176,11 +173,11 @@ func (c *ListenCommand) Run(args []string, app *app.App) error {
 				fmt.Printf("\n#### %X ####\n%s\n##########################\n\n", id, message)
 			}
 			if conn != nil {
-                if c.getBoolVar("new-line") {
-                    conn.Push(append(message, '\n'), id)
-                } else {
-                    conn.Push(append(message, byte(0)), id)
-                }
+				if c.getBoolVar("new-line") {
+					conn.Push(append(message, '\n'), id)
+				} else {
+					conn.Push(append(message, byte(0)), id)
+				}
 			}
 		}
 	}

@@ -1,19 +1,19 @@
 package net
 
 import (
-    "net"
-    "io/ioutil"
-    "time"
-    "crypto/x509"
-    "crypto/tls"
+	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
+	"net"
+	"time"
 
-    "github.com/pbergman/logger"
+	"github.com/pbergman/logger"
 )
 
 type TcpTlsConnPool struct {
-    address     *GraylogHost
-    config      *tls.Config
-    connPool
+	address *GraylogHost
+	config  *tls.Config
+	connPool
 }
 
 func (c *TcpTlsConnPool) bind(conn *net.Conn) (err error) {
@@ -25,9 +25,9 @@ func (c *TcpTlsConnPool) bind(conn *net.Conn) (err error) {
 }
 
 func (c *TcpTlsConnPool) Start(workers int) {
-    c.lock.Lock()
-    defer c.lock.Unlock()
-    c.start(workers, c.bind)
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	c.start(workers, c.bind)
 }
 
 func NewTcpTlsConnPool(tries int, address *GraylogHost, ca, crt, pem string, logger logger.LoggerInterface) (ConnPoolInterface, error) {
@@ -48,13 +48,13 @@ func NewTcpTlsConnPool(tries int, address *GraylogHost, ca, crt, pem string, log
 			Certificates: []tls.Certificate{pair},
 		},
 		connPool: connPool{
-            KeepAlive: 3 * time.Minute,
-            Timeout:   1 * time.Minute,
-            logger:    logger,
+			KeepAlive: 3 * time.Minute,
+			Timeout:   1 * time.Minute,
+			logger:    logger,
 			connQueue: connQueue{
-			    tries: tries,
+				tries: tries,
 				queue: make(chan *ConnQueueItem, 10),
 			},
-        },
+		},
 	}, nil
 }

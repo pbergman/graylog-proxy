@@ -64,7 +64,7 @@ type CreateCaCommand struct {
 
 func (c CreateCaCommand) Run(args []string, app *app.App) error {
 	if s := len(args); s != 1 {
-	    return fmt.Errorf("invalid arguments, expected 1 got %d", s)
+		return fmt.Errorf("invalid arguments, expected 1 got %d", s)
 	}
 	output := app.Container.(*Container).GetLogger()
 	outCrt := c.getFileFromFlag("out-crt")

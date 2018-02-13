@@ -56,11 +56,11 @@ func (c CreateServerCommand) Init(a *app.App) error {
 	}
 	c.Flags.(*pflag.FlagSet).StringSliceP("host", "H", nil, "")
 	c.Flags.(*pflag.FlagSet).DurationP("not-after", "e", 525600*time.Minute, "")
-    c.Flags.(*pflag.FlagSet).String("out-pem", "Server.pem", "")
-    c.Flags.(*pflag.FlagSet).String("out-crt", "Server.crt", "")
-    c.Flags.(*pflag.FlagSet).String("in-pem", "", "")
-    c.Flags.(*pflag.FlagSet).String("in-ca-pem", "CA_Root.pem", "")
-    c.Flags.(*pflag.FlagSet).String("in-ca-crt", "CA_Root.crt", "")
+	c.Flags.(*pflag.FlagSet).String("out-pem", "Server.pem", "")
+	c.Flags.(*pflag.FlagSet).String("out-crt", "Server.crt", "")
+	c.Flags.(*pflag.FlagSet).String("in-pem", "", "")
+	c.Flags.(*pflag.FlagSet).String("in-ca-pem", "CA_Root.pem", "")
+	c.Flags.(*pflag.FlagSet).String("in-ca-crt", "CA_Root.crt", "")
 	return nil
 }
 
@@ -85,10 +85,10 @@ func (c CreateServerCommand) Run(args []string, app *app.App) error {
 	} else {
 		output.Debug(fmt.Sprintf("using '%s' for CA pem", inPem))
 	}
-    key, err := c.getKey(output, c.getFileFromFlag("in-pem"), outPem)
-    if err != nil {
-        return err
-    }
+	key, err := c.getKey(output, c.getFileFromFlag("in-pem"), outPem)
+	if err != nil {
+		return err
+	}
 	ttl, err := c.getNotAfter()
 	if err != nil {
 		return err

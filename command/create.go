@@ -3,13 +3,12 @@ package command
 import (
 	"crypto/rsa"
 	"crypto/x509/pkix"
+	"encoding/asn1"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
-	"fmt"
-	"encoding/asn1"
-
 
 	"github.com/pbergman/app"
 	"github.com/pbergman/graylog-proxy/x509"
@@ -90,19 +89,19 @@ func (c create) newKey(name string) (*rsa.PrivateKey, error) {
 // with a input filename or when that is a empty string it will create
 // a new private key base on the "out" file location
 func (c create) getKey(output logger.LoggerInterface, in, out string) (*rsa.PrivateKey, error) {
-    if in != "" {
+	if in != "" {
 		if key, err := x509.OpenPrivateKey(in); err != nil {
-		    switch e := err.(type) {
-            case *os.PathError:
-                return nil, e
-            case asn1.StructuralError:
-                return nil, fmt.Errorf("failed to decode private key (not a PKCS#8 format?), %s", err.Error())
-            default:
-                return nil, e
-            }
+			switch e := err.(type) {
+			case *os.PathError:
+				return nil, e
+			case asn1.StructuralError:
+				return nil, fmt.Errorf("failed to decode private key (not a PKCS#8 format?), %s", err.Error())
+			default:
+				return nil, e
+			}
 		} else {
-            output.Debug(fmt.Sprintf("using private key '%s'", in))
-            return key, nil
+			output.Debug(fmt.Sprintf("using private key '%s'", in))
+			return key, nil
 		}
 	} else {
 		if key, err := c.newKey(out); err != nil {
@@ -125,5 +124,5 @@ func (c create) resolvePath(file string) string {
 	if len(file) > 0 && file[0] != '/' {
 		return filepath.Join(c.Flags.(*pflag.FlagSet).Lookup("cwd").Value.String(), file)
 	}
-	return file;
+	return file
 }

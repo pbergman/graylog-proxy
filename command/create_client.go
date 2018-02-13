@@ -88,10 +88,10 @@ func (c CreateClientCommand) Run(args []string, app *app.App) error {
 	} else {
 		output.Debug(fmt.Sprintf("using '%s' for CA pem", inPem))
 	}
-    key, err := c.getKey(output, c.getFileFromFlag("in-pem"), outPem)
-    if err != nil {
-        return err
-    }
+	key, err := c.getKey(output, c.getFileFromFlag("in-pem"), outPem)
+	if err != nil {
+		return err
+	}
 	ttl, err := c.getNotAfter()
 	if err != nil {
 		return err

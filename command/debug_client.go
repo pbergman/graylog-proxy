@@ -1,21 +1,21 @@
 package command
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
 	"runtime"
 	"time"
-    "encoding/hex"
 
 	"github.com/pbergman/app"
-	"github.com/spf13/pflag"
 	"github.com/pbergman/graylog-proxy/net"
+	"github.com/spf13/pflag"
 )
 
 func NewDebugClientCommand() app.CommandInterface {
 	return &DebugClientCommand{
-        create: create{
+		create: create{
 			app.Command{
 				Flags: new(pflag.FlagSet),
 				Name:  "debug:client",
@@ -63,7 +63,7 @@ func (c *DebugClientCommand) Init(a *app.App) error {
 	c.Flags.(*pflag.FlagSet).String("crt", "Client.crt", "")
 	c.Flags.(*pflag.FlagSet).String("ca", "CA_Root.crt", "")
 	c.Flags.(*pflag.FlagSet).String("full-message", "", "")
-    c.Flags.(*pflag.FlagSet).IntP("tries", "t", 5, "")
+	c.Flags.(*pflag.FlagSet).IntP("tries", "t", 5, "")
 	c.Flags.(*pflag.FlagSet).String("short-message", "example stack trace", "")
 	c.Flags.(*pflag.FlagSet).String("host", "", "")
 	c.Flags.(*pflag.FlagSet).Bool("new-line", false, "")
@@ -77,8 +77,8 @@ func (c *DebugClientCommand) Init(a *app.App) error {
 }
 
 func (c DebugClientCommand) getIntVar(s string) int {
-    r, _ := c.Flags.(*pflag.FlagSet).GetInt(s)
-    return r
+	r, _ := c.Flags.(*pflag.FlagSet).GetInt(s)
+	return r
 }
 
 func (c DebugClientCommand) getBoolVar(s string) bool {
@@ -112,10 +112,10 @@ func (c DebugClientCommand) getMessage() (buf []byte, err error) {
 		return
 	}
 	if c.getBoolVar("new-line") {
-        return append(buf, '\n'), nil
-    } else {
-        return append(buf, byte(0)), nil
-    }
+		return append(buf, '\n'), nil
+	} else {
+		return append(buf, byte(0)), nil
+	}
 }
 
 func (c DebugClientCommand) Run(args []string, app *app.App) error {
@@ -130,17 +130,17 @@ func (c DebugClientCommand) Run(args []string, app *app.App) error {
 		c.getBoolVar("no-client-auth"),
 		c.getIntVar("tries"),
 		host,
-        c.Flags.(*pflag.FlagSet).Lookup("ca").Value.String(),
-        c.Flags.(*pflag.FlagSet).Lookup("crt").Value.String(),
-        c.Flags.(*pflag.FlagSet).Lookup("pem").Value.String(),
-        app.Container.(*Container).GetLogger(),
+		c.Flags.(*pflag.FlagSet).Lookup("ca").Value.String(),
+		c.Flags.(*pflag.FlagSet).Lookup("crt").Value.String(),
+		c.Flags.(*pflag.FlagSet).Lookup("pem").Value.String(),
+		app.Container.(*Container).GetLogger(),
 	)
 	if err != nil {
 		return err
 	}
 	defer pool.Close()
 	pool.Start(1)
- 	message, err := c.getMessage()
+	message, err := c.getMessage()
 	if err != nil {
 		return err
 	}
