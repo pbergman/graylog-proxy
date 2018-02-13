@@ -1,0 +1,60 @@
+package net
+
+import (
+    "net"
+    "io/ioutil"
+    "time"
+    "crypto/x509"
+    "crypto/tls"
+
+    "github.com/pbergman/logger"
+)
+
+type TcpTlsConnPool struct {
+    address     *GraylogHost
+    config      *tls.Config
+    connPool
+}
+
+func (c *TcpTlsConnPool) bind(conn *net.Conn) (err error) {
+	dialer := new(net.Dialer)
+	dialer.KeepAlive = c.KeepAlive
+	dialer.Timeout = c.Timeout
+	*conn, err = tls.DialWithDialer(dialer, c.address.GetNetwork(), c.address.GetHost(), c.config)
+	return
+}
+
+func (c *TcpTlsConnPool) Start(workers int) {
+    c.lock.Lock()
+    defer c.lock.Unlock()
+    c.start(workers, c.bind)
+}
+
+func NewTcpTlsConnPool(tries int, address *GraylogHost, ca, crt, pem string, logger logger.LoggerInterface) (ConnPoolInterface, error) {
+	buf, err := ioutil.ReadFile(ca)
+	if err != nil {
+		return nil, err
+	}
+	certPool := x509.NewCertPool()
+	certPool.AppendCertsFromPEM(buf)
+	pair, err := tls.LoadX509KeyPair(crt, pem)
+	if err != nil {
+		return nil, err
+	}
+	return &TcpTlsConnPool{
+		address: address,
+		config: &tls.Config{
+			RootCAs:      certPool,
+			Certificates: []tls.Certificate{pair},
+		},
+		connPool: connPool{
+            KeepAlive: 3 * time.Minute,
+            Timeout:   1 * time.Minute,
+            logger:    logger,
+			connQueue: connQueue{
+			    tries: tries,
+				queue: make(chan *ConnQueueItem, 10),
+			},
+        },
+	}, nil
+}
