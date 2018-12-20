@@ -80,7 +80,7 @@ monolog:
 
         gelf:
             type: service
-            id: zicht_monolog.gelf_handler
+            id: monolog.gelf_handler
             level: allert
 ```
 

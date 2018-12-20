@@ -29,7 +29,7 @@ Arguments:
 Options:
     --quiet                 Disable the application output
     --verbose (-v,-vv,-vvv) Increase the verbosity of application output
-	--cwd (-c)              Set the current working directory (default '{{ .Env "PWD" }})
+    --cwd (-c)              Set the current working directory (default '{{ .Env "PWD" }})
     --full-message          Full message that will be used for the GELF payload (default will be a stack trace)
     --short-message         Short message that will be used for the GELF payload (default 'example stack trace')
     --host                  Host that will be used for the GELF payload (default to the hostname)
@@ -37,7 +37,7 @@ Options:
     --level                 Level for the GELF payload (default 1)
     --dump                  Write a hexdump of the message that's going to be send to the server.
     --new-line              Use new line delimiter instead of a null byte
-	--no-client-auth        Will nog load certificates hen using a secure scheme
+    --no-client-auth        Will nog load certificates hen using a secure scheme
     --pem                   The file name for the client private key (default ./Client.pem)
     --crt                   The file name for the client certificate (default ./Client.crt)
     --ca                    The file name for the CA certificate (default ./CA_Root.crt)

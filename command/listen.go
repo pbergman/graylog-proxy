@@ -27,14 +27,14 @@ the REMOTE_ADDRESS is not provided.
 
     --quiet                 Disable the application output
     --verbose (-v,-vv,-vvv) Increase the verbosity of application output
-	--cwd (-c)              Set the current working directory (default '{{ .Env "PWD" }})
+    --cwd (-c)              Set the current working directory (default '{{ .Env "PWD" }})
     --pem                   The file name for the client private key (default ./Client.pem)
     --crt                   The file name for the client certificate (default ./Client.crt)
     --ca                    The file name for the CA certificate (default ./CA_Root.crt)
     --new-line              Use new line delimiter instead of a null byte
-	--workers (-w)          Set the max concurrent workers for handling incoming messages (default 10)
-	--print                 Print the message as the are going to be send
-	--no-client-auth        Will nog load certificates hen using a secure scheme
+    --workers (-w)          Set the max concurrent workers for handling incoming messages (default 10)
+    --print                 Print the message as the are going to be send
+    --no-client-auth        Will not load certificates when using a secure scheme
 
 Example:
     {{ exec_bin }} listen 127.0.0.1:12201 example.logger.com:12201
