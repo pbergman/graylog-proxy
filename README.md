@@ -81,7 +81,7 @@ monolog:
         gelf:
             type: service
             id: monolog.gelf_handler
-            level: allert
+            level: alert
 ```
 
 with this all `alert` records will be handled by the glef handler and send
