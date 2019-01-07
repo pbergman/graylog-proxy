@@ -29,15 +29,13 @@ func (c *Container) GetCurrent() app.CommandInterface {
 }
 
 func (c *Container) AddFlags(set *pflag.FlagSet) {
-	if set != c.flags {
-		set.AddFlagSet(c.flags)
-	} else {
-		set.BoolP("quiet", "q", false, "")
-		set.StringP("cwd", "c", os.Getenv("PWD"), "")
-		set.BoolSliceP("verbose", "v", []bool{}, "")
-		set.Lookup("verbose").NoOptDefVal = "true"
-		set.Lookup("quiet").NoOptDefVal = "true"
-	}
+	set.BoolP("quiet", "q", false, "")
+	set.StringP("cwd", "c", os.Getenv("PWD"), "")
+	set.BoolSliceP("verbose", "v", []bool{}, "")
+	set.BoolP("help", "h", false, "")
+	set.Lookup("help").NoOptDefVal = "true"
+	set.Lookup("verbose").NoOptDefVal = "true"
+	set.Lookup("quiet").NoOptDefVal = "true"
 }
 
 func (c *Container) init() {
@@ -100,7 +98,7 @@ func (c *Container) GetLogger() logger.LoggerInterface {
 				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.NOTICE))
 			case 2: // very verbose
 				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.INFO))
-			case 3: // debug
+			default: // debug
 				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.DEBUG))
 
 			}

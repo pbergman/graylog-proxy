@@ -38,7 +38,14 @@ func newApp(c *command.Container) *app.App {
 	application.Container = c
 
 	application.PreRun = func(cmd app.CommandInterface) error {
+
+		if val, err := c.GetFlags().GetBool("help"); err == nil && val {
+			application.PrintHelp(cmd)
+			application.Active = false
+		}
+
 		c.SetCurrent(cmd)
+
 		return nil
 	}
 

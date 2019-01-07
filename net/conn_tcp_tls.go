@@ -3,6 +3,7 @@ package net
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"time"
@@ -35,12 +36,15 @@ func NewTcpTlsConnPool(tries int, address *GraylogHost, ca, crt, pem string, log
 	if err != nil {
 		return nil, err
 	}
+	logger.Debug(fmt.Sprintf("loaded ca root certificate: '%s'", ca))
 	certPool := x509.NewCertPool()
 	certPool.AppendCertsFromPEM(buf)
 	pair, err := tls.LoadX509KeyPair(crt, pem)
 	if err != nil {
 		return nil, err
 	}
+	logger.Debug(fmt.Sprintf("loaded certificate: '%s'", crt))
+	logger.Debug(fmt.Sprintf("loaded private key: '%s'", pem))
 	return &TcpTlsConnPool{
 		address: address,
 		config: &tls.Config{

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -34,12 +35,15 @@ func NewHttpsConnPool(tries int, host *GraylogHost, ca, crt, pem string, logger 
 	if err != nil {
 		return nil, err
 	}
+	logger.Debug(fmt.Sprintf("loaded ca root certificate: '%s'", ca))
 	certPool := x509.NewCertPool()
 	certPool.AppendCertsFromPEM(buf)
 	pair, err := tls.LoadX509KeyPair(crt, pem)
 	if err != nil {
 		return nil, err
 	}
+	logger.Debug(fmt.Sprintf("loaded certificate: '%s'", crt))
+	logger.Debug(fmt.Sprintf("loaded private key: '%s'", pem))
 	return &HttpsConnPool{
 		HttpConnPool: HttpConnPool{
 			host:   host,

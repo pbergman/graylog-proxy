@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	// a pattern matrching the connectionless protocols
+	// a pattern matching the connectionless protocols
 	dsnPattern = regexp.MustCompile(`^(udp[4|6]?|unixgram|ip[4|6]?:[^:]+)://([^$]+)$`)
 )
 

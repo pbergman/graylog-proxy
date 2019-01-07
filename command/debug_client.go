@@ -43,9 +43,9 @@ Options:
     --ca                    The file name for the CA certificate (default ./CA_Root.crt)
 
 Example:
-    {{ exec_bin }} debug:client --pem=client.pem --crt=client.crt --ca=root.crt example.logger.com:12201
+    {{ exec_bin }} debug:client --pem=client.pem --crt=client.crt --ca=root.crt tcp+tls://example.logger.com:12201
 
-                `,
+`,
 			},
 		},
 	}
@@ -130,9 +130,9 @@ func (c DebugClientCommand) Run(args []string, app *app.App) error {
 		c.getBoolVar("no-client-auth"),
 		c.getIntVar("tries"),
 		host,
-		c.Flags.(*pflag.FlagSet).Lookup("ca").Value.String(),
-		c.Flags.(*pflag.FlagSet).Lookup("crt").Value.String(),
-		c.Flags.(*pflag.FlagSet).Lookup("pem").Value.String(),
+		c.getFileFromFlag("ca"),
+		c.getFileFromFlag("crt"),
+		c.getFileFromFlag("pem"),
 		app.Container.(*Container).GetLogger(),
 	)
 	if err != nil {

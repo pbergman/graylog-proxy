@@ -1,0 +1,12 @@
+[Unit]
+Description=An graylog proxy that listen on connectionless protocol and forward to remote tcp input over a secure connection
+After=network.target
+Documentation=https://github.com/pbergman/graylog-proxy
+
+[Service]
+ExecStart=/usr/local/bin/graylog-proxy
+TimeoutStopSec=0
+
+[Install]
+WantedBy=multi-user.target
+Alias=graylog-proxy.service

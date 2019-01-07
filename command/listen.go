@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"os"
 
 	"github.com/pbergman/app"
 	"github.com/pbergman/graylog-proxy/net"
@@ -37,7 +38,7 @@ the REMOTE_ADDRESS is not provided.
     --no-client-auth        Will not load certificates when using a secure scheme
 
 Example:
-    {{ exec_bin }} listen 127.0.0.1:12201 example.logger.com:12201
+    {{ exec_bin }} listen 127.0.0.1:12201 tcp://example.logger.com:12201
 `,
 		},
 	}
@@ -80,7 +81,14 @@ func (c *ListenCommand) print() bool {
 func (c ListenCommand) getFileFromFlag(n string) string {
 	file := c.Flags.(*pflag.FlagSet).Lookup(n).Value.String()
 	if file[0] != '/' {
-		file = filepath.Join(c.Flags.(*pflag.FlagSet).Lookup("cwd").Value.String(), file)
+
+		cwd := c.Flags.(*pflag.FlagSet).Lookup("cwd").Value.String()
+
+		if cwd[0] == '~' {
+			file = filepath.Join(os.Getenv("HOME"), cwd[1:], file)
+		} else {
+			file = filepath.Join(c.Flags.(*pflag.FlagSet).Lookup("cwd").Value.String(), file)
+		}
 	}
 	return file
 }
@@ -143,9 +151,9 @@ func (c *ListenCommand) Run(args []string, app *app.App) error {
 			c.getBoolVar("no-client-auth"),
 			c.getIntVar("tries"),
 			host,
-			c.Flags.(*pflag.FlagSet).Lookup("ca").Value.String(),
-			c.Flags.(*pflag.FlagSet).Lookup("crt").Value.String(),
-			c.Flags.(*pflag.FlagSet).Lookup("pem").Value.String(),
+			c.getFileFromFlag("ca"),
+			c.getFileFromFlag("crt"),
+			c.getFileFromFlag("pem"),
 			app.Container.(*Container).GetLogger(),
 		)
 
