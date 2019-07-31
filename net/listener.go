@@ -27,7 +27,7 @@ type Listener struct {
 	conn    net.PacketConn
 	lock    *sync.Mutex
 	pool    *sync.Pool
-	log     logger.LoggerInterface
+	log     *logger.Logger
 	queue   map[[8]byte]*chunkMessage
 	Done    chan interface{}
 }
@@ -162,7 +162,7 @@ func (u *Listener) connect() (err error) {
 }
 
 // NewListener is wrapper around the gelf protocol for connectionless protocols, udp, unixgram or ip
-func NewListener(address string, log logger.LoggerInterface) (*Listener, error) {
+func NewListener(address string, log *logger.Logger) (*Listener, error) {
 	if match := dsnPattern.FindStringSubmatch(address); len(match) != 3 {
 		return nil, errors.New("invalid (connectionless) address '" + address + "'")
 	} else {

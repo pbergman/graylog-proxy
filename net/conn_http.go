@@ -15,7 +15,7 @@ type HttpConnPool struct {
 	host    *GraylogHost
 	lock    sync.Mutex
 	pool    *sync.Pool
-	logger  logger.LoggerInterface
+	logger  *logger.Logger
 }
 
 func (p HttpConnPool) Close() {
@@ -73,7 +73,7 @@ func (p *HttpConnPool) process(conn *http.Client, wg *sync.WaitGroup) {
 	}
 }
 
-func NewHttpConnPool(tries int, host *GraylogHost, logger logger.LoggerInterface) (ConnPoolInterface, error) {
+func NewHttpConnPool(tries int, host *GraylogHost, logger *logger.Logger) (ConnPoolInterface, error) {
 	return &HttpConnPool{
 		host:   host,
 		logger: logger,

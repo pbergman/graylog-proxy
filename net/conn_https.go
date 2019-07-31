@@ -30,7 +30,7 @@ func (p HttpsConnPool) Start(workers int) {
 	}
 }
 
-func NewHttpsConnPool(tries int, host *GraylogHost, ca, crt, pem string, logger logger.LoggerInterface) (ConnPoolInterface, error) {
+func NewHttpsConnPool(tries int, host *GraylogHost, ca, crt, pem string, logger *logger.Logger) (ConnPoolInterface, error) {
 	buf, err := ioutil.ReadFile(ca)
 	if err != nil {
 		return nil, err

@@ -27,7 +27,7 @@ type ConnPoolInterface interface {
 	Write(data []byte) (int, error)
 }
 
-func NewConnPool(noClientAuth bool, tries int, address *GraylogHost, ca, crt, pem string, logger logger.LoggerInterface) (ConnPoolInterface, error) {
+func NewConnPool(noClientAuth bool, tries int, address *GraylogHost, ca, crt, pem string, logger *logger.Logger) (ConnPoolInterface, error) {
 	switch network := address.GetNetwork(); network {
 	case "tcp", "tcp4", "tcp6":
 		if !noClientAuth && address.IsSecure() {

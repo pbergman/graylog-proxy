@@ -88,7 +88,7 @@ func (c create) newKey(name string) (*rsa.PrivateKey, error) {
 // getKey will return a private keys that can be one that is provided
 // with a input filename or when that is a empty string it will create
 // a new private key base on the "out" file location
-func (c create) getKey(output logger.LoggerInterface, in, out string) (*rsa.PrivateKey, error) {
+func (c create) getKey(output *logger.Logger, in, out string) (*rsa.PrivateKey, error) {
 	if in != "" {
 		if key, err := x509.OpenPrivateKey(in); err != nil {
 			switch e := err.(type) {

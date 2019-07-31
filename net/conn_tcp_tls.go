@@ -31,7 +31,7 @@ func (c *TcpTlsConnPool) Start(workers int) {
 	c.start(workers, c.bind)
 }
 
-func NewTcpTlsConnPool(tries int, address *GraylogHost, ca, crt, pem string, logger logger.LoggerInterface) (ConnPoolInterface, error) {
+func NewTcpTlsConnPool(tries int, address *GraylogHost, ca, crt, pem string, logger *logger.Logger) (ConnPoolInterface, error) {
 	buf, err := ioutil.ReadFile(ca)
 	if err != nil {
 		return nil, err

@@ -5,14 +5,13 @@ import (
 
 	"github.com/pbergman/app"
 	"github.com/pbergman/logger"
-	"github.com/pbergman/logger/handlers"
 	"github.com/spf13/pflag"
 )
 
 type Container struct {
 	app     *app.App
 	flags   *pflag.FlagSet
-	logger  logger.LoggerInterface
+	logger  *logger.Logger
 	current app.CommandInterface
 }
 
@@ -85,29 +84,26 @@ func (c *Container) GetVerboseLevel() int {
 	return len(size)
 }
 
-func (c *Container) GetLogger() logger.LoggerInterface {
+func (c *Container) GetLogger() *logger.Logger {
 	if c.logger == nil {
 		var handler []logger.HandlerInterface
-		if ok, _ := c.flags.GetBool("quiet"); ok {
-			handler = append(handler, handlers.NewNoOpHandler(logger.DEBUG, false))
-		} else {
+		if ok, _ := c.flags.GetBool("quiet"); !ok {
 			switch c.GetVerboseLevel() {
 			case 0: // normal
-				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.WARNING))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Warning, false))
 			case 1: // verbose
-				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.NOTICE))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Notice, false))
 			case 2: // very verbose
-				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.INFO))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Info, false))
 			default: // debug
-				handler = append(handler, handlers.NewWriterHandler(os.Stdout, logger.DEBUG))
-
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Debug, false))
 			}
 		}
 		c.logger = logger.NewLogger("main", handler...)
 	}
 
 	if curr := c.GetCurrent(); curr != nil {
-		return c.logger.(*logger.Logger).Get(curr.GetName())
+		return c.logger.WithName(curr.GetName())
 	}
 
 	return c.logger

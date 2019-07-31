@@ -23,7 +23,7 @@ func (c *TcpConnPool) Start(workers int) {
 	c.start(workers, c.bind)
 }
 
-func NewTcpConnPool(tries int, host *GraylogHost, logger logger.LoggerInterface) (ConnPoolInterface, error) {
+func NewTcpConnPool(tries int, host *GraylogHost, logger *logger.Logger) (ConnPoolInterface, error) {
 	if address, err := net.ResolveTCPAddr(host.GetNetwork(), host.GetHost()); err != nil {
 		return nil, err
 	} else {

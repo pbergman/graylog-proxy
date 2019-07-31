@@ -14,7 +14,7 @@ type connPool struct {
 
 	pool      []net.Conn
 	lock      sync.Mutex
-	logger    logger.LoggerInterface
+	logger    *logger.Logger
 	KeepAlive time.Duration
 	Timeout   time.Duration
 }
