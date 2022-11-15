@@ -29,6 +29,7 @@ type Listener struct {
 	pool    *sync.Pool
 	log     *logger.Logger
 	queue   map[[8]byte]*chunkMessage
+	queueLock *sync.Mutex
 	Done    chan interface{}
 }
 
@@ -104,9 +105,13 @@ func (u *Listener) parse(buf []byte, id []byte) {
 func (u *Listener) parseChunck(b []byte, sid []byte) {
 	id, index, count := [8]byte{b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9]}, b[10], b[11]
 	u.log.Debug(fmt.Sprintf("[%X] chunck %X %d/%d", sid, id, index+1, count))
+
 	if _, ok := u.queue[id]; !ok {
+		u.queueLock.Lock()
+		defer u.queueLock.Unlock()
 		u.queue[id] = NewChunkMessage(make([][]byte, count, count), u, id, sid)
 	}
+
 	u.queue[id].chunks[index] = b[12:]
 }
 
@@ -173,6 +178,7 @@ func NewListener(address string, log *logger.Logger) (*Listener, error) {
 			lock:    new(sync.Mutex),
 			Done:    make(chan interface{}, 5),
 			queue:   make(map[[8]byte]*chunkMessage),
+			queueLock: new(sync.Mutex),
 			pool: &sync.Pool{
 				New: func() interface{} {
 					return new(bytes.Buffer)
