@@ -106,9 +106,10 @@ func (u *Listener) parseChunck(b []byte, sid []byte) {
 	id, index, count := [8]byte{b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9]}, b[10], b[11]
 	u.log.Debug(fmt.Sprintf("[%X] chunck %X %d/%d", sid, id, index+1, count))
 
+	u.queueLock.Lock()
+	defer u.queueLock.Unlock()
+
 	if _, ok := u.queue[id]; !ok {
-		u.queueLock.Lock()
-		defer u.queueLock.Unlock()
 		u.queue[id] = NewChunkMessage(make([][]byte, count, count), u, id, sid)
 	}
 
@@ -176,7 +177,7 @@ func NewListener(address string, log *logger.Logger) (*Listener, error) {
 			network: match[1],
 			log:     log,
 			lock:    new(sync.Mutex),
-			Done:    make(chan interface{}, 5),
+			Done:    make(chan interface{}, 500),
 			queue:   make(map[[8]byte]*chunkMessage),
 			queueLock: new(sync.Mutex),
 			pool: &sync.Pool{
