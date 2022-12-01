@@ -177,7 +177,7 @@ func NewListener(address string, log *logger.Logger) (*Listener, error) {
 			network: match[1],
 			log:     log,
 			lock:    new(sync.Mutex),
-			Done:    make(chan interface{}, 500),
+			Done:    make(chan interface{}, 5),
 			queue:   make(map[[8]byte]*chunkMessage),
 			queueLock: new(sync.Mutex),
 			pool: &sync.Pool{
