@@ -27,7 +27,7 @@ func (g GraylogHost) IsSecure() bool {
 }
 
 func NewGraylogHost(host string) *GraylogHost {
-	pattern := regexp.MustCompile(`(?:(tcp[4|6]?(?:\+tls)?|http[s]?)://)([^$]+)`)
+	pattern := regexp.MustCompile(`^(?:(tcp(?:4|6)?(?:\+ssl)?|https?):\/\/)(.*)$`)
 	if pattern.MatchString(host) {
 		info := pattern.FindStringSubmatch(host)
 		var network string

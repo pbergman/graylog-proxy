@@ -25,7 +25,7 @@ func (c *chunkMessage) check() {
 		if c.valid() {
 			c.listener.log.Debug(fmt.Sprintf("[%X] message %X complete", c.sid, c.id[:]))
 			c.listener.parse(c.merge(), c.sid)
-			delete(c.listener.queue, c.id)
+			c.listener.queue.Delete(c.id)
 			return
 		}
 		// expires, all message should arrive within 5 seconds
@@ -65,5 +65,4 @@ func NewChunkMessage(ref [][]byte, listener *Listener, id [8]byte, sid []byte) *
 	}
 	go message.check()
 	return message
-
 }

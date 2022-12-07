@@ -90,13 +90,13 @@ func (c *Container) GetLogger() *logger.Logger {
 		if ok, _ := c.flags.GetBool("quiet"); !ok {
 			switch c.GetVerboseLevel() {
 			case 0: // normal
-				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Warning, false))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.LogLevelWarning(), false))
 			case 1: // verbose
-				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Notice, false))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.LogLevelNotice(), false))
 			case 2: // very verbose
-				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Info, false))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.LogLevelInfo(), false))
 			default: // debug
-				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.Debug, false))
+				handler = append(handler, logger.NewWriterHandler(os.Stdout, logger.LogLevelDebug(), false))
 			}
 		}
 		c.logger = logger.NewLogger("main", handler...)
