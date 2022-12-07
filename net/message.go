@@ -23,9 +23,7 @@ func (c *chunkMessage) check() {
 	defer c.ticker.Stop()
 	for now := range c.ticker.C {
 		if c.valid() {
-			c.listener.log.Debug(fmt.Sprintf("[%X] message %X complete", c.sid, c.id[:]))
-			c.listener.parse(c.merge(), c.sid)
-			delete(c.listener.queue, c.id)
+			c.listener.removeQueueMessage(c)
 			return
 		}
 		// expires, all message should arrive within 5 seconds

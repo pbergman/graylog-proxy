@@ -76,7 +76,7 @@ func (u *Listener) createId(in []byte, out []byte) {
 func (u *Listener) parse(buf []byte, id []byte) {
 	switch {
 	case buf[0] == 0x1e && buf[1] == 0x0f: // chunked
-		u.parseChunck(buf, id)
+		u.parseChunk(buf, id)
 	case buf[0] == 0x1f && buf[1] == 0x8b: // gzip
 		if ret, err := u.unmarshalGzip(buf); err != nil {
 			u.log.Debug(fmt.Sprintf("[%X] failed to decompress gzip stream", id))
@@ -102,12 +102,21 @@ func (u *Listener) parse(buf []byte, id []byte) {
 	}
 }
 
-func (u *Listener) parseChunck(b []byte, sid []byte) {
-	id, index, count := [8]byte{b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9]}, b[10], b[11]
-	u.log.Debug(fmt.Sprintf("[%X] chunck %X %d/%d", sid, id, index+1, count))
-
+func (u *Listener) removeQueueMessage(c *chunkMessage) {
 	u.queueLock.Lock()
 	defer u.queueLock.Unlock()
+
+	u.log.Debug(fmt.Sprintf("[%X] message %X complete", c.sid, c.id[:]))
+	u.parse(c.merge(), c.sid)
+	delete(u.queue, c.id)
+}
+
+func (u *Listener) parseChunk(b []byte, sid []byte) {
+	u.queueLock.Lock()
+	defer u.queueLock.Unlock()
+
+	id, index, count := [8]byte{b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9]}, b[10], b[11]
+	u.log.Debug(fmt.Sprintf("[%X] chunck %X %d/%d", sid, id, index+1, count))
 
 	if _, ok := u.queue[id]; !ok {
 		u.queue[id] = NewChunkMessage(make([][]byte, count, count), u, id, sid)
