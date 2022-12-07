@@ -63,5 +63,4 @@ func NewChunkMessage(ref [][]byte, listener *Listener, id [8]byte, sid []byte) *
 	}
 	go message.check()
 	return message
-
 }

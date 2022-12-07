@@ -103,11 +103,11 @@ func (u *Listener) parse(buf []byte, id []byte) {
 }
 
 func (u *Listener) removeQueueMessage(c *chunkMessage) {
-	u.queueLock.Lock()
-	defer u.queueLock.Unlock()
-
 	u.log.Debug(fmt.Sprintf("[%X] message %X complete", c.sid, c.id[:]))
 	u.parse(c.merge(), c.sid)
+
+	u.queueLock.Lock()
+	defer u.queueLock.Unlock()
 	delete(u.queue, c.id)
 }
 
